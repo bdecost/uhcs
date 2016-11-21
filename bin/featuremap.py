@@ -36,11 +36,11 @@ def ensure_dir(path):
 @click.argument('micrographs_json', nargs=1, type=click.Path(),
                 help='specify image dataset (id: path)')
 @click.option('-k', '--n_clusters', help='number of dictionary words', default=100)
-@click.option('-s', '--style', default='ssift', help='sparse or dense sift; VGG',
-              type=click.Choice(['ssift', 'dsift', 'vgg16']), help='select image representation')
-@click.option('-e', '--encoding', default='bow', help='encoding method', type=click.Choice(['bow', 'vlad', 'fisher']),
-              help='select image feature pooling method')
-@click.option('-l', '--layername', default='block5_conv3', help='layer to extract', type=click.Choice(layer_choices),
+@click.option('-s', '--style', default='ssift', type=click.Choice(['ssift', 'dsift', 'vgg16']),
+              help='select image representation')
+@click.option('-e', '--encoding', default='bow', type=click.Choice(['bow', 'vlad', 'fisher']),
+              help='select image feature encoding method')
+@click.option('-l', '--layername', default='block5_conv3', type=click.Choice(layer_choices),
               help='select vgg16 convolution layer')
 def featuremap(micrographs_json, n_clusters, style, encoding, layername):
     """ compute image representations for each image enumerated in micrographs_json 

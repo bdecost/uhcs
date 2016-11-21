@@ -88,8 +88,8 @@ def featuremap(micrographs_json, n_clusters, style, encoding, layername):
         print('learning dictionary for {} images'.format(len(micrographs)))
         training_fraction = 0.1
 
-        results = list(map(partial(extract_func, fraction=training_fraction), micrographs))
-        features = np.concatenate(results)
+        results = map(partial(extract_func, fraction=training_fraction), micrographs)
+        features = np.vstack(results)
 
         if encoding in ('bow', 'vlad'):
             dictionary = MiniBatchKMeans(n_clusters=n_clusters, init='k-means++', n_init=25)

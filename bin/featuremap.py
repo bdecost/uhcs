@@ -33,8 +33,7 @@ def ensure_dir(path):
     except: pass
 
 @click.command()
-@click.argument('micrographs_json', nargs=1, type=click.Path(),
-                help='specify image dataset (id: path)')
+@click.argument('micrographs_json', nargs=1, type=click.Path())
 @click.option('-k', '--n_clusters', help='number of dictionary words', default=100)
 @click.option('-s', '--style', default='ssift', type=click.Choice(['ssift', 'dsift', 'vgg16']),
               help='select image representation')

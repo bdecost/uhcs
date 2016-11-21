@@ -9,6 +9,7 @@
 """
 
 import numpy as np
+from scipy.misc import imresize
 from skimage.color import gray2rgb
 
 from keras.models import Model
@@ -51,3 +52,17 @@ def cnn_features(image, layername, fraction=1.0):
         features = features[sample]
     
     return features
+
+def multiscale_cnn_features(image, layername, fraction=1.0,
+                            scale=1/np.sqrt(2), n_downsample=3, n_upsample=1):
+    """ pool feature maps from scale-space pyramid to increase scale-invariance """
+    resample_exponents = range(min(-n_upsample, 0), max(0, n_downsample))
+
+    f = []
+    for exponent in resample_exponents:
+        # resample image with bilinear interpolation
+        im = imresize(image, scale**exponent)
+        f.append(cnn_features(im, layername, fraction=fraction))
+
+    return np.vstack(f)
+

@@ -41,7 +41,7 @@ def ensure_dir(path):
               help='select image feature encoding method')
 @click.option('-l', '--layername', default='block5_conv3', type=click.Choice(layer_choices),
               help='select vgg16 convolution layer')
-@click.option('--multiscale/--no-multiscale', default=False, help='layer to extract',
+@click.option('--multiscale/--no-multiscale', default=False,
               help='multiscale spatial pooling for CNN feature maps')
 def featuremap(micrographs_json, n_clusters, style, encoding, layername, multiscale):
     """ compute image representations for each image enumerated in micrographs_json 

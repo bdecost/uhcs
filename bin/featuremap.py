@@ -41,7 +41,9 @@ def ensure_dir(path):
               help='select image feature encoding method')
 @click.option('-l', '--layername', default='block5_conv3', type=click.Choice(layer_choices),
               help='select vgg16 convolution layer')
-def featuremap(micrographs_json, n_clusters, style, encoding, layername):
+@click.option('--multiscale/--no-multiscale', default=False, help='layer to extract',
+              help='multiscale spatial pooling for CNN feature maps')
+def featuremap(micrographs_json, n_clusters, style, encoding, layername, multiscale):
     """ compute image representations for each image enumerated in micrographs_json 
         results are stored in HDF5 keyed by the image ids in micrographs_json
     """
@@ -50,7 +52,10 @@ def featuremap(micrographs_json, n_clusters, style, encoding, layername):
     ensure_dir(os.path.join(dataset_dir, 'features'))
                 
     if style in ['vgg16']:
-        method = '{}_{}'.format(style, layername)
+        if multiscale:
+            method = '{}_multiscale_{}'.format(style, layername)
+        else:
+            method = '{}_{}'.format(style, layername)
     else:
         method = style
         
@@ -79,7 +84,11 @@ def featuremap(micrographs_json, n_clusters, style, encoding, layername):
     elif style == 'dsift':
         extract_func = lambda mic, fraction=1.0: local.dense_sift(mic, fraction=fraction)
     elif style == 'vgg16':
-        extract_func = lambda mic, fraction=1.0: cnn.cnn_features(mic, layername, fraction=fraction)
+        if multiscale:
+            # use default scale parameters for now: 1/sqrt(2) with one octave of upsampling, 3 downsampling
+            extract_func = lambda mic, fraction=1.0: cnn.multiscale_cnn_features(mic, layername, fraction=fraction)
+        else:
+            extract_func = lambda mic, fraction=1.0: cnn.cnn_features(mic, layername, fraction=fraction)
 
     try:
         dictionary = joblib.load(dictionary_file)

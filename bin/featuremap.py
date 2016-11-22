@@ -110,8 +110,11 @@ def featuremap(micrographs_json, n_clusters, style, encoding, layername, multisc
         # serialize k-means results to disk
         pkl_paths = joblib.dump(dictionary, dictionary_file)
 
-
-    encode_func = lambda mic: encode.vlad(extract_func(mic), dictionary)
+    if encoding == 'bow':
+        encode_func = lambda mic: encode.bag_of_words(extract_func(mic), dictionary)
+    elif encoding == 'vlad':
+        encode_func = lambda mic: encode.vlad(extract_func(mic), dictionary)
+        
     features = map(encode_func, micrographs)
     with h5py.File(featurefile, 'w') as f:
         for key, feature in zip(keys, features):

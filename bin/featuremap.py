@@ -48,6 +48,13 @@ def featuremap(micrographs_json, n_clusters, style, encoding, layername, multisc
         results are stored in HDF5 keyed by the image ids in micrographs_json
     """
     dataset_dir, __ = os.path.split(micrographs_json)
+
+    # crop scale bars off of full-sized images
+    # don't crop pre-cropped images....
+    barheight = 0
+    if 'full' in dataset_dir:
+        barheight = 38
+        
     ensure_dir(os.path.join(dataset_dir, 'dictionary'))
     ensure_dir(os.path.join(dataset_dir, 'features'))
                 
@@ -73,7 +80,7 @@ def featuremap(micrographs_json, n_clusters, style, encoding, layername, multisc
     # work with sorted micrograph keys...
     keys = sorted(micrograph_dataset.keys())
     micrographs = [micrograph_dataset[key] for key in keys]
-    micrographs = [io.load_image(m) for m in micrographs]
+    micrographs = [io.load_image(m, barheight=barheight) for m in micrographs]
     
     # set up paths
     dictionary_file = '{dir}/dictionary/{method}-kmeans-{n_clusters}.pkl'.format(**metadata)

@@ -1,3 +1,34 @@
 uhcs
 
 code accompanying 'Exploring the microstructure manifold: image texture representations applied to ultrahigh carbon steel microstructures'.
+
+
+## workflow
+unpack dataset (microstructures.sqlite, micrographs/*.{tif,png,jpg}, etc)
+
+# pre-crop micrographs
+python scripts/crop_micrographs.py
+
+# generate json files mapping image keys to file paths
+# for inertia reasons...
+python scripts/enumerate_dataset.py
+
+# compute microstructure representations
+# launches a bunch of slurm jobs
+bash scripts/compute_representations.sh
+
+# svm experiments
+# primary microconstituent:
+bash scripts/svm_result.sh
+
+# annealing condition:
+bash scripts/sample_svm.sh
+
+# run t-SNE (or other dimensionality reduction method...)
+bash tsne_embed.sh
+(bash manifold_embed.sh)
+
+# make t-SNE figures
+bash tsne_map.sh
+
+# make plots (jupyter....)

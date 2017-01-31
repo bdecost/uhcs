@@ -128,8 +128,8 @@ def svm_param_select(datafile, kernel, margin_param, n_per_class, n_repeats, red
             m_id, quadrant = key.split('-')
         else:
             m_id = key
-        m = db.query(Micrograph).filter(Micrograph.id == int(m_id)).one()
-        labels.append(m.mstructure_class)
+        m = db.query(Micrograph).filter(Micrograph.micrograph_id == int(m_id)).one()
+        labels.append(m.primary_microconstituent)
     labels = np.array(labels)
 
     # simplify: get primary microconstituent; throw out martensite

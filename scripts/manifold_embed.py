@@ -61,8 +61,8 @@ def tsne_embed(datafile, kernel, method, n_repeats, seed):
             m_id, quadrant = key.split('-')
         else:
             m_id = key
-        m = db.query(Micrograph).filter(Micrograph.id == int(m_id)).one()
-        labels.append(m.mstructure_class)
+        m = db.query(Micrograph).filter(Micrograph.micrograph_id == int(m_id)).one()
+        labels.append(m.primary_microconstituent)
     labels = np.array(labels)
 
     if kernel == 'linear':

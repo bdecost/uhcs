@@ -117,7 +117,7 @@ def sample_svm(datafile, kernel, margin_param, n_per_class, n_repeats, reduce_di
             m_id, quadrant = key.split('-')
         else:
             m_id = key
-        m = db.query(Micrograph).filter(Micrograph.id == int(m_id)).one()
+        m = db.query(Micrograph).filter(Micrograph.micrograph_id == int(m_id)).one()
         # IMPORTANT: labels here refers to sample label
         labels.append(m.sample.label)
     labels = np.array(labels)

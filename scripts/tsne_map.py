@@ -128,11 +128,11 @@ def tsne_map(featuresfile, mapsize, thumbsize, bordersize, perplexity):
     for key in keys:
         if 'crop' in featuresfile:
             key = key.split('-')[0]
-        m = db.query(Micrograph).filter(Micrograph.id == int(key)).one()
-        labels.append(m.mstructure_class)
+        m = db.query(Micrograph).filter(Micrograph.micrograph_id == int(key)).one()
+        labels.append(m.primary_microconstituent)
 
         basename, ext = os.path.splitext(m.path)
-        paths.append('data/micrographs/micrograph{}{}'.format(m.id, ext))
+        paths.append('data/micrographs/micrograph{}{}'.format(m.micrograph_id, ext))
 
     # set thumbnail border colors -- keep consistent with scatter plots
     colornames = ["blue", "cerulean", "red", "dusty purple", "saffron", "dandelion", "green"]

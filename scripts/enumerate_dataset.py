@@ -16,20 +16,20 @@ db = DBSession()
 
 c = ['pearlite+widmanstatten', 'spheroidite', 'spheroidite+widmanstatten',
     'martensite', 'network', 'pearlite', 'pearlite+spheroidite']
-micrographs = db.query(Micrograph).filter(Micrograph.mstructure_class.in_(c)).all()
+micrographs = db.query(Micrograph).filter(Micrograph.primary_microconstituent.in_(c)).all()
 
 full = {}
 cropped = {}
 for micrograph in micrographs:
     # print('{}: {}'.format(micrograph.mstructure_class, micrograph.path))
     prefix, ext = os.path.splitext(micrograph.path)
-    path = 'data/micrographs/micrograph{}{}'.format(micrograph.id, ext)
-    print('{}: {}'.format(micrograph.mstructure_class, path))
-    full[micrograph.id] = path
+    path = 'data/micrographs/micrograph{}{}'.format(micrograph.micrograph_id, ext)
+    print('{}: {}'.format(micrograph.primary_microconstituent, path))
+    full[micrograph.micrograph_id] = path
     
     for crop in ('UL', 'UR', 'LL', 'LR'):
-        path = 'data/crops/micrograph{}-crop{}.tif'.format(micrograph.id, crop)
-        key = '{}-crop{}'.format(micrograph.id, crop)
+        path = 'data/crops/micrograph{}-crop{}.tif'.format(micrograph.micrograph_id, crop)
+        key = '{}-crop{}'.format(micrograph.micrograph_id, crop)
         cropped[key] = path
 
 

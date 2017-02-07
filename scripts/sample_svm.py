@@ -23,8 +23,6 @@ Base.metadata.bind = engine
 DBSession = sessionmaker(bind=engine)
 db = DBSession()
 
-dataset_index_file = 'data/sample-classification-dataset-keys.npy'
-
 def load_representations(datafile, keys):
     # grab image representations from hdf5 file
     features = []
@@ -91,9 +89,10 @@ def cv_loop_linear(labels, X, cv, C=1, n_repeats=1, reduce_dim=None):
 def sample_svm(datafile, kernel, margin_param, n_per_class, n_repeats, reduce_dim, seed):
     # datafile = './data/full/features/vgg16_block5_conv3-vlad-32.h5'
 
+    dataset_index_file = 'data/sample-classification-dataset-keys-{}.npy'.format(n_per_class)
     
     # if margin_param is specified, record the results
-    resultsdir = 'sample-svm'
+    resultsdir = 'sample-svm-{}'.format(n_per_class)
     resultsfile = datafile.replace('features', resultsdir).replace('h5', 'json')
     
     try:
@@ -122,14 +121,14 @@ def sample_svm(datafile, kernel, margin_param, n_per_class, n_repeats, reduce_di
         labels.append(m.sample.label)
     labels = np.array(labels)
 
-    # for consistency with 
+    # for consistency with other data aggregation code
     k = keys
     l = labels
     X = features
 
 
-    cv = StratifiedKFold(n_splits=10, shuffle=True)
-    # cv = StratifiedShuffleSplit(n_splits=10, test_size=0.1)
+    # do leave-one-out stratified cross-validation
+    cv = StratifiedKFold(n_splits=n_per_class, shuffle=True)
 
     print(datafile)
     results = {

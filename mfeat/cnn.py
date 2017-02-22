@@ -28,30 +28,32 @@ def image_tensor(image):
     x = np.expand_dims(x, axis=0)
     return preprocess_input(x)
 
-def cnn_features(image, layername, fraction=1.0):
-    """ use keras to obtain cnn feature map """
-    output_layer = [cnn.layers[layer_id[layername]].output]
-    cnn_map = K.function([cnn.layers[0].input], output_layer)
+def tensor_to_features(X, subsample=None):
+    """ convert feature map tensor to numpy data matrix {nsamples, nchannels} """
     
-    t = image_tensor(image)
-    out = cnn_map([t])[0]
-
-    n_channels = out.shape[1]
-    n_points = out.shape[2] * out.shape[3]
-
     # transpose array so that map dimensions are on the last axis
-    # reshape to a standard data matrix (samples, channels)
-    features = out.transpose(2,3,1,0)
-    features = features.reshape((n_points, n_channels))
+    features = X.transpose(0,2,3,1) # to [batch, height, width, channels]
+    features = features.reshape((-1, features.shape[-1])) # to [feature, channels]
 
-    if fraction < 1.0:
-        # randomly subsample some feature map pixels for dictionary learning
-        sample = np.sort(
-            np.random.choice(range(n_points), int(fraction*n_points), replace=False)
+    if subsample >= 1.0 or sumsample <= 0:
+        subsample = None
+
+    if subsample is not None:
+        choice = np.sort(
+            np.random.choice(range(features.shape[0]), size=subsample, replace=False)
         )
-        features = features[sample]
-    
+        features = features[choice]
+        
     return features
+
+def cnn_features(image, layername, fraction=None):
+    """ use keras to obtain cnn feature map """
+    # TODO: refactor calling code to directly call keras model
+    
+    model = Model(input=cnn.input, output=cnn.get_layer(layername).output)
+    out = model.predict(image_tensor(image))
+        
+    return tensor_to_features(out, subsample=fraction)
 
 def multiscale_cnn_features(image, layername, fraction=1.0,
                             scale=1/np.sqrt(2), n_downsample=3, n_upsample=1):

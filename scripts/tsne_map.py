@@ -45,25 +45,31 @@ def load_features(featuresfile, perplexity=40):
     X = np.array(X)
     return keys, X
 
+def colorpad(image, color=np.array([1,1,0]), width=3):
+    """ pad out a thumbnail with a colored border """
+    i = skimage.color.gray2rgb(image)
+    z = np.pad(i, ((3,3),(3,3), (0,0)), mode='constant', constant_values=(-1,-1))
+    z[z[:,:,0] == -1 ] = color
+    return z
 
 def image_montage(X, images, bordercolors, mapsize=8192, thumbsize=256, bordersize=4, verbose=False):
     """ make image maps in an embedding space """
 
-    halfthumbsize = int((thumbsize + 2*bordersize)/2)
+    # convert embedding coordinates to range (0,1)
+    xmap = (1 + (X / (1.1*np.max(np.abs(X), axis=0)))) / 2
+    
     map_shape = np.array([mapsize,mapsize,3])
     imagemap = np.ones(map_shape)
 
     # rescale max distance from origin to 1
     scale = np.max(np.abs(X[:,0:2]))
 
-    # choose some random images to draw
-    # sel = np.random.choice(range(keys.size), replace=False, size=2000)
-
     for ids, image in enumerate(images):
 
-        # get image position
-        pos = X[ids][:2]
-    
+        # get image position and border color
+        pos = xmap[ids][:2]
+        bordercolor = bordercolors[ids]
+        
         # load image
         with warnings.catch_warnings():
             warnings.simplefilter('ignore', UserWarning)
@@ -74,29 +80,22 @@ def image_montage(X, images, bordercolors, mapsize=8192, thumbsize=256, bordersi
         cropped = im[:mindim,:mindim]
     
         # make thumbnail
-        thumbnail = skimage.transform.resize(cropped, (thumbsize,thumbsize), order=1)
+        thumbnail = skimage.transform.resize(cropped, (thumbsize,thumbsize), order=1)        
+        thumbnail = colorpad(thumbnail, color=bordercolor)
+
+        thumb_width, thumb_height, _ = np.array(thumbnail.shape)
+        y, x = np.round(pos * mapsize).astype(int)
+        x = mapsize - x # image convention -- match scatter plot
         
-            
-        # convert to float+color -- float enables use of marker value (-1)
-        thumbnail = skimage.img_as_float(thumbnail)
-        thumbnail = skimage.color.gray2rgb(thumbnail)
-
-        # add a colored border
-        bordercolor = bordercolors[ids]
-        thumbnail = np.lib.pad(thumbnail, ((bordersize,bordersize), (bordersize,bordersize), (0,0)),
-                               'constant', constant_values=(-1,-1))
-        thumbnail[thumbnail[:,:,0] == -1] = bordercolor
-
-        # map position to image coordinates with buffer region
-        # x,y = np.round(pos/scale * ((mapsize-(thumbsize+3+bordersize))/2) + (mapsize/2)).astype(int)
-        x,y = np.round(pos/scale * ((mapsize-(thumbsize+10+bordersize))/2) + (mapsize/2)).astype(int)
-        x = mapsize-x # image convention -- match scatter plot
         # place thumbnail into image map
         if verbose:
             print(thumbnail.shape)
-            print(halfthumbsize*2)
             print('({},{})'.format(x,y))
-        imagemap[x-(halfthumbsize):x+(halfthumbsize),y-(halfthumbsize):y+(halfthumbsize),:] = thumbnail
+
+        xstart = x-int(thumb_width/2)
+        ystart = y-int(thumb_height/2)
+    
+        imagemap[xstart:xstart+thumb_width,ystart:ystart+thumb_height,:] = thumbnail
 
     return imagemap
 

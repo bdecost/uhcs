@@ -39,7 +39,7 @@ bash scripts/sample_svm.sh
 6: run t-SNE (or other dimensionality reduction method...). Results stored in `data/${format}/tsne/${representation}.h5`
 ```sh
 bash scripts/tsne_embed.sh
-# bash scripts/manifold_embed.sh)
+# bash scripts/manifold_embed.sh
 ```
 
 7: make t-SNE thumbnail maps. Thumbnail maps are stored at `data/${format}/tsne/${representation}.png`

@@ -3,7 +3,7 @@
 code accompanying 'Exploring the microstructure manifold: image texture representations applied to ultrahigh carbon steel microstructures' -- Brian DeCost, Toby Francis, and Elizabeth Holm. [arxiv.org](http://arxiv.org/abs/1702.01117)
 
 This paper compares SIFT-based image representations with convolutional neural network representations for complex microstructures found in ultrahigh carbon steels.
-The micrographs were collected by Matt Hecht at CMU through two studies: [a network morphology study](https://scholar.google.com/scholar?oi=bibs&cluster=16995291491472547776&btnI=1&hl=en) and a spheroidite morphology study (accepted for publication in Met Trans A).
+The micrographs were collected by Matt Hecht at CMU through two studies: [a network morphology study](https://scholar.google.com/scholar?oi=bibs&cluster=16995291491472547776&btnI=1&hl=en) and a [spheroidite morphology study](https://dx.doi.org/10.1007/s11661-017-4012-2).
 We plan to make the data available soon in the NIST repository (in conjunction with an IMMI manuscript submission).
 
 ## workflow

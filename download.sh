@@ -6,7 +6,7 @@
 NIST_DATASET=11256/940
 NIST_DATASET_URL=https://materialsdata.nist.gov/dspace/xmlui/bitstream/handle/${NIST_DATASET}
 
-DATADIR=uhcsdata
+DATADIR=data
 
 echo "download data files into DATADIR=${DATADIR}"
 mkdir -p ${DATADIR}

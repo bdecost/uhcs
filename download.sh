@@ -8,25 +8,13 @@ NIST_DATASET_URL=https://materialsdata.nist.gov/dspace/xmlui/bitstream/handle/${
 
 DATADIR=uhcsdata
 
-echo "download toplevel files"
-for archivefile in README.md setup.sh; do
-    curl ${NIST_DATASET_URL}/${archivefile} -o ${archivefile}
-done
-
-for archivefile in uhcsdb.zip tools.zip; do
-    curl ${NIST_DATASET_URL}/${archivefile} -o ${archivefile}
-    unzip ${archivefile}
-done
-
 echo "download data files into DATADIR=${DATADIR}"
 mkdir -p ${DATADIR}
 touch ${DATADIR}/__init__.py
 
-for archivefile in microstructures.sqlite models.py; do
-    curl ${NIST_DATASET_URL}/${archivefile} -o ${DATADIR}/${archivefile}
-done
+# download metadata
+curl ${NIST_DATASET_URL}/microstructures.sqlite -o ${DATADIR}/microstructures.sqlite
 
-for archivefile in micrographs.zip representations.zip embed.zip figures.zip; do
-    curl ${NIST_DATASET_URL}/${archivefile} -o ${DATADIR}/${archivefile}
-    unzip ${DATADIR}/${archivefile} -d ${DATADIR}
-done
+# download micrographs
+curl ${NIST_DATASET_URL}/micrographs.zip -o ${DATADIR}/micrographs.zip
+unzip ${DATADIR}/micrographs.zip -d ${DATADIR}

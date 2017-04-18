@@ -9,8 +9,6 @@ NIST_DATASET_URL=https://materialsdata.nist.gov/dspace/xmlui/bitstream/handle/${
 DATADIR=data
 
 echo "download data files into DATADIR=${DATADIR}"
-mkdir -p ${DATADIR}
-touch ${DATADIR}/__init__.py
 
 # download metadata
 curl ${NIST_DATASET_URL}/microstructures.sqlite -o ${DATADIR}/microstructures.sqlite
